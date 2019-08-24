@@ -1,5 +1,5 @@
 //the swipe function
-detectSwipe = function(elem, callback){
+webswipe = function(elem, callback){
     var eventMove = {
         x:0,
         y:0
