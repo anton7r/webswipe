@@ -1,5 +1,5 @@
 # webswipe
-1KB&lt; simple to use swipe gesture listener.
+1KB&gt; simple to use swipe gesture listener.
 
 # Setup
 
