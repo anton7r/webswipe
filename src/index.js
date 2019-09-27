@@ -1,5 +1,5 @@
 //the swipe function
-webswipe = function(elem, callback){
+webswipe = function(elem, whileMoveCallback, callback){
     var eventMove = {
         x:0,
         y:0
@@ -19,9 +19,7 @@ webswipe = function(elem, callback){
     elem.addEventListener(isTouch ? "touchmove" : "mousemove", function(ev){
         eventMove.x = isTouch ? ev.touches[0].clientX : ev.clientX;
         eventMove.y = isTouch ? ev.touches[0].clientY : ev.clientY;
-    });
-
-    elem.addEventListener(isTouch ? "touchend" : "mouseup", function(ev){
+        console.log("mouseDown");
         var xTotal = eventStart.x - eventMove.x,
         yTotal = eventStart.y - eventMove.y,
         xDistance = Math.abs(xTotal),
@@ -45,8 +43,39 @@ webswipe = function(elem, callback){
             }
             moved = yDistance;
         }
+        whileMoveCallback(dir, moved);
+    });
 
-        callback(dir, moved);
+    elem.addEventListener(isTouch ? "touchend" : "mouseup", function(ev){
 
+        setTimeout(function(){
+            var xTotal = eventStart.x - eventMove.x,
+            yTotal = eventStart.y - eventMove.y,
+            xDistance = Math.abs(xTotal),
+            yDistance = Math.abs(yTotal),
+            dir,
+            moved;
+    
+            if (xDistance > yDistance){ //moved on x-axis
+                if (xTotal > 0){
+                    dir = "left";
+                } else {
+                    dir = "right";
+                }
+                moved = xDistance;
+    
+            } else { //moved on y-axis
+                if (yTotal > 0){
+                    dir = "top";
+                } else {
+                    dir = "bottom";
+                }
+                moved = yDistance;
+            }
+    
+            callback(dir, moved);
+        }, 10);
     });
 };
+
+module.exports = webswipe;
