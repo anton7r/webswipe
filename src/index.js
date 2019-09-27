@@ -1,5 +1,8 @@
 //the swipe function
-webswipe = function(elem, whileMoveCallback, callback){
+
+
+var webswipe = function(elem, whileMoveCallback, callback){
+
     var eventMove = {
         x:0,
         y:0
@@ -11,22 +14,17 @@ webswipe = function(elem, whileMoveCallback, callback){
     },
     isTouch = window.Touch || false;
 
-    elem.addEventListener(isTouch ? "touchstart" : "mousedown", function(ev){
-        eventStart.x = isTouch ? ev.touches[0].clientX : ev.clientX;
-        eventStart.y = isTouch ? ev.touches[0].clientY : ev.clientY;
-    });
-
-    elem.addEventListener(isTouch ? "touchmove" : "mousemove", function(ev){
-        eventMove.x = isTouch ? ev.touches[0].clientX : ev.clientX;
-        eventMove.y = isTouch ? ev.touches[0].clientY : ev.clientY;
-        console.log("mouseDown");
+    var isDone = false;
+    
+    var untilDone = function (){
+        
         var xTotal = eventStart.x - eventMove.x,
         yTotal = eventStart.y - eventMove.y,
         xDistance = Math.abs(xTotal),
         yDistance = Math.abs(yTotal),
         dir,
         moved;
-
+    
         if (xDistance > yDistance){ //moved on x-axis
             if (xTotal > 0){
                 dir = "left";
@@ -34,7 +32,7 @@ webswipe = function(elem, whileMoveCallback, callback){
                 dir = "right";
             }
             moved = xDistance;
-
+    
         } else { //moved on y-axis
             if (yTotal > 0){
                 dir = "top";
@@ -44,10 +42,27 @@ webswipe = function(elem, whileMoveCallback, callback){
             moved = yDistance;
         }
         whileMoveCallback(dir, moved);
+        
+        if(isDone === false){
+            untilDone();
+        }
+
+    };
+    
+    elem.addEventListener(isTouch ? "touchstart" : "mousedown", function(ev){
+        isDone = false;
+        eventStart.x = isTouch ? ev.touches[0].clientX : ev.clientX;
+        eventStart.y = isTouch ? ev.touches[0].clientY : ev.clientY;
+        untilDone();
+    });
+
+    elem.addEventListener(isTouch ? "touchmove" : "mousemove", function(ev){
+        eventMove.x = isTouch ? ev.touches[0].clientX : ev.clientX;
+        eventMove.y = isTouch ? ev.touches[0].clientY : ev.clientY;
     });
 
     elem.addEventListener(isTouch ? "touchend" : "mouseup", function(ev){
-
+        isDone = true;
         setTimeout(function(){
             var xTotal = eventStart.x - eventMove.x,
             yTotal = eventStart.y - eventMove.y,
