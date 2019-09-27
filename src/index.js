@@ -15,7 +15,8 @@ var webswipe = function(elem, whileMoveCallback, callback){
     isTouch = window.Touch || false;
     var previousMove;
 
-    var isDone = false;
+    var isDone = false,
+    touched = false;
     
     var untilDone = function (){
 
@@ -54,6 +55,7 @@ var webswipe = function(elem, whileMoveCallback, callback){
     };
     
     function done(){
+        touched = false;
         isDone = true;
             var xTotal = eventStart.x - eventMove.x,
             yTotal = eventStart.y - eventMove.y,
@@ -85,14 +87,18 @@ var webswipe = function(elem, whileMoveCallback, callback){
 
     elem.addEventListener(isTouch ? "touchstart" : "mousedown", function(ev){
         isDone = false;
+        touched = true;
         eventStart.x = isTouch ? ev.touches[0].clientX : ev.clientX;
         eventStart.y = isTouch ? ev.touches[0].clientY : ev.clientY;
     });
 
     elem.addEventListener(isTouch ? "touchmove" : "mousemove", function(ev){
-        eventMove.x = isTouch ? ev.touches[0].clientX : ev.clientX;
-        eventMove.y = isTouch ? ev.touches[0].clientY : ev.clientY;
-        untilDone();
+        
+        if(touched === true){
+            eventMove.x = isTouch ? ev.touches[0].clientX : ev.clientX;
+            eventMove.y = isTouch ? ev.touches[0].clientY : ev.clientY;
+            untilDone();
+        }
     });
 
     elem.addEventListener(isTouch ? "touchcancel" : "mouseleave", done);
